@@ -74,6 +74,19 @@ class SavedThreadView(APIView):
             return HttpResponse(json.dumps(serializer.errors), content_type='application/json',
                                  status=status.HTTP_400_BAD_REQUEST)
     
+    def delete(self, request):
+        user_id = request.user.id
+        thread_id = request.data['thread']
+
+        try:
+            saved_thread = SavedThread.objects.get(thread = thread_id, user = user_id)
+            saved_thread.delete()
+        except SavedThread.DoesNotExist:
+            return HttpResponse(json.dumps({'message': 'Saved thread does not exist'}), 
+                                content_type='application/json', status=status.HTTP_404_NOT_FOUND)
+
+        return HttpResponse(json.dumps({'message': 'Saved thread deleted'}), 
+                                content_type='application/json', status=status.HTTP_204_NO_CONTENT)
 
 
 def check_author_match(user_id, author_id):
