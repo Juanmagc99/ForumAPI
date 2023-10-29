@@ -31,3 +31,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return "Comment in " + self.thread.title
+    
+class SavedThread(models.Model):
+    user = models.ForeignKey(User, related_name='saved',
+                             on_delete=models.CASCADE)
+    thread = models.ForeignKey(Thread, related_name='saved',
+                             on_delete=models.CASCADE)

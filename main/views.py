@@ -1,12 +1,15 @@
-
+import json
+from django.http import HttpResponse
+from requests import Response, delete
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets
-
+from rest_framework.views import APIView
 from forum.settings import MEDIA_ROOT
-from .serializers import CommentSerializer, ThreadSerializer
-from .models import Comment, Thread
+from .serializers import CommentSerializer, SavedThreadSerializer, ThreadSerializer
+from .models import Comment, SavedThread, Thread
 from rest_framework.permissions import IsAuthenticated
-import os
+from rest_framework import status
+
 
 # Create your views here.
 class ThreadViewSet(viewsets.ModelViewSet):
@@ -46,6 +49,31 @@ class CommentViewSet(viewsets.ModelViewSet):
         user_id = self.request.user.id
         check_author_match(user_id, instance.author.id)
         return super().perform_destroy(instance)
+
+class SavedThreadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_id = request.user.id
+        threads = [t.thread for t in SavedThread.objects.filter(user = user_id).all()]
+        serializer = ThreadSerializer(threads, many = True)
+        return HttpResponse(json.dumps(serializer.data), content_type='application/json'
+                            , status=status.HTTP_200_OK)
+
+    def post(self, request):
+        user_id = request.user.id
+        data = request.data
+        data['user'] = user_id
+        serializer = SavedThreadSerializer(data=data)
+    
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(json.dumps({'message': 'Saved'}), content_type='application/json',
+                                status=status.HTTP_201_CREATED)
+        else:
+            return HttpResponse(json.dumps(serializer.errors), content_type='application/json',
+                                 status=status.HTTP_400_BAD_REQUEST)
+    
 
 
 def check_author_match(user_id, author_id):

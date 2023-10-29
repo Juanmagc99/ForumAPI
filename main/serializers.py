@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Comment, Thread
+from .models import Comment, SavedThread, Thread
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,5 +12,10 @@ class ThreadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thread
+        fields = '__all__'
+
+class SavedThreadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SavedThread
         fields = '__all__'
     
