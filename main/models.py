@@ -10,11 +10,22 @@ def subfolder_manage(instance, filename):
 
 # Create your models here.
 class Thread(models.Model):
+
+    class Subforum(models.IntegerChoices):
+        GENERAL = 1, "General"
+        FILMS = 2, "Films"
+        GAMES = 3, "Games"
+        POLITICS = 4, "Pol"
+
     author =models.ForeignKey(User , related_name='threads', 
-                              on_delete=models.CASCADE)
+                                on_delete=models.CASCADE)
     title = models.CharField(max_length=120)
     body = models.TextField()
     published_date = models.DateField(auto_now_add=True)
+    subforum = models.PositiveSmallIntegerField(
+        choices=Subforum.choices,
+        default=Subforum.GENERAL
+    )
     picture = models.ImageField(upload_to= subfolder_manage
                                 , null=True, blank=True)
 
