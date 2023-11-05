@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'corsheaders',
-    'main.apps.MainConfig'
+    'main.apps.MainConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [

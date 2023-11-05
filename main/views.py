@@ -20,7 +20,6 @@ class ThreadViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         author_id = self.request.query_params.get('author_id')
         if author_id:
-            print("Hola")
             queryset = Thread.objects.filter(author = author_id).order_by('published_date').reverse()
             return queryset
         return super().get_queryset()
