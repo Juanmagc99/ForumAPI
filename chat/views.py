@@ -11,14 +11,15 @@ class MessageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):
-        sender_id = self.request.query_params.get('author_id')
-        if sender_id:       
-            queryset = Message.objects.filter(sent_to = sender_id)
+        user_id = self.request.user.id
+        if user_id:       
+            queryset = Message.objects.filter(sent_to = user_id)
             return queryset
         return super().get_queryset()
     
     def perform_create(self, serializer):
-
+        user_id = self.request.user.id
+        check_author(serializer.validated_data.get('send_by').id, user_id)
         return super().perform_create(serializer)
     
 def check_implied(sender_id, receptor_id, user_id):
