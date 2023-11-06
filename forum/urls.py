@@ -18,15 +18,18 @@ from django.contrib import admin
 from django.urls import include, path
 from main.views import CommentViewSet, ThreadViewSet
 from rest_framework.routers import DefaultRouter
+from chat.views import MessageViewSet
 
 router = DefaultRouter()
 
 router.register(r'thread', ThreadViewSet)
 router.register(r'comment', CommentViewSet)
+router.register(r'message', MessageViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
-    path('api/main/', include(router.urls)),
+    path('api/', include(router.urls)),
     path('api/main/', include('main.urls')),
+    path('api/chat/', include('chat.urls')),
 ]
